@@ -2,10 +2,12 @@
 OpenProps is a tiny Java library which reads and writes .properties files 
 using the same code as java.util.Properties from the OpenJDK, but enhanced so
 that it preserves the order of entries within the file, and it also preserves
-comments in the file.
-
-This means that a Properties editor or a file converter written to use 
+comments in the file.  This means that a Properties editor or a file converter written to use 
 OpenProps won't have to lose comments or mess up the order of entries. 
+
+By using OpenJDK code, OpenProps should handle all the old corner-cases in 
+exactly the same way Java does.  The handling of whitespace and comments is
+tested by a number of JUnit tests.  But please let me know if you find a bug!
 
 Note the following differences from java.util.Properties:
 
