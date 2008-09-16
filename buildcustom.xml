@@ -1,0 +1,29 @@
+<?eclipse.ant.import?>
+<project name="custom" default="dist" basedir="." > 
+<property file="buildcustom.properties"/>
+<property name="distdir" value="dist/openprops-${version}"/> 
+<property name="jarname" value="openprops-${version}.jar"/> 
+<property name="zipname" value="openprops-${version}.zip"/> 
+<property name="zippath" value="dist/${zipname}"/> 
+<target name="distclean">
+  <delete dir="dist"/>
+</target>
+<target name="distroot">
+  <mkdir dir="dist"/>
+</target>
+<target name="jar" depends="distroot">
+  <jar destfile="dist/${jarname}" basedir="bin"/>
+</target>
+<target name="dist" depends="jar,distroot">
+  <delete dir="${distdir}"/>
+  <mkdir dir="${distdir}" />
+  <copy todir="${distdir}">
+    <fileset dir="." includes="src/**,test/**,.settings/**,misc/**,orig/**,.classpath,.project,build*,*.txt"/>
+    <fileset dir="dist" includes="${jarname}"/>
+  </copy>
+  <zip destfile="${zippath}">
+    <fileset dir="dist" includes="openprops-${version}/**" />
+  </zip>
+  <delete dir="${distdir}"/>
+</target>
+</project>
