@@ -21,6 +21,8 @@ Note the following differences from java.util.Properties:
 Also note that any header comment in the .properties file will be interpreted as
 a comment attached to the first message.
 
+- Sean Flanigan <sflaniga@redhat.com>
+
 
 Licence:
 
