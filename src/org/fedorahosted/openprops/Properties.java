@@ -1166,7 +1166,7 @@ class Properties {
 	switch (trimmed.charAt(0)) {
 	case '#':
 	case '!':
-	    return trimmed.substring(1);
+	    return trimmed.substring(1).trim();
 	default:
 	    return trimmed;
 	}
