@@ -6,6 +6,7 @@
  */
 package org.fedorahosted.openprops;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +23,19 @@ import org.fedorahosted.openprops.Properties;
 import junit.framework.TestCase;
 
 public class PropertiesTest extends TestCase {
+    
+    public void testGetSetComment() throws Exception {
+	Properties beforeProps = new Properties();
+	String beforeComment = "comment";
+	beforeProps.setComment("key", beforeComment);
+	beforeProps.setProperty("key", "value");
+	ByteArrayOutputStream out = new ByteArrayOutputStream();
+	beforeProps.store(out, null);
+	Properties afterProps = new Properties();
+	afterProps.load(new ByteArrayInputStream(out.toByteArray()));
+	assertEquals(beforeComment, afterProps.getComment("key"));
+    }
+    
     public void testBasic() throws Exception {
 	roundTripForTestName();
     }
@@ -71,6 +85,12 @@ public class PropertiesTest extends TestCase {
 	checkRoundTripResult(expectedName, inputName);
     }
 
+    /**
+     * Runs a round-trip test for the properties file whose name matches the running test.
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
     private void roundTripForTestName() throws IOException, FileNotFoundException {
 //	System.out.println(getName());
 	checkRoundTripResult(getPropertiesName(), getPropertiesName());

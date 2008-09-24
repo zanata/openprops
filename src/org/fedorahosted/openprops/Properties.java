@@ -40,6 +40,7 @@ import java.io.BufferedWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.InvalidPropertiesFormatException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -148,16 +149,18 @@ class Properties {
      * @since    1.2
      */
     public synchronized Object setProperty(String key, String value) {
-	Entry entry = props.get(key);
-	if (entry == null) {
-	    entry = new Entry(null, value);
-	    props.put(key, entry);
-	    return null;
-	} else {
-	    String result = entry.getValue();
-	    entry.setValue(value);
-	    return result;
-	}
+	if (key == null || value == null)
+	    throw new NullPointerException();
+        Entry entry = props.get(key);
+        if (entry == null) {
+            entry = new Entry(null, value);
+            props.put(key, entry);
+            return null;
+        } else {
+            String result = entry.getValue();
+            entry.setValue(value);
+            return result;
+        }
     }
 
 
@@ -361,7 +364,7 @@ class Properties {
             //System.out.println("line=<" + new String(lr.lineBuf, 0, limit) + ">");
             precedingBackslash = false;
             while (keyLen < limit) {
-        	// looking for the end of the key...
+                // looking for the end of the key...
                 c = lr.lineBuf[keyLen];
                 //need check if escaped.
                 if ((c == '=' ||  c == ':') && !precedingBackslash) {
@@ -390,14 +393,14 @@ class Properties {
                 }
                 valueStart++;
             }
-            if(lr.isCommentLine) {
-		prevComment.append(new String(lr.lineBuf, 0, limit));
-	    } else {
-		String key = loadConvert(lr.lineBuf, 0, keyLen, convtBuf);
-		String value = loadConvert(lr.lineBuf, valueStart, limit - valueStart, convtBuf);
-		props.put(key, new Entry(prevComment.toString(), value));
-		prevComment.setLength(0);
-	    }
+            if (lr.isCommentLine) {
+                prevComment.append(new String(lr.lineBuf, 0, limit));
+            } else {
+                String key = loadConvert(lr.lineBuf, 0, keyLen, convtBuf);
+                String value = loadConvert(lr.lineBuf, valueStart, limit - valueStart, convtBuf);
+                props.put(key, new Entry(prevComment.toString(), value));
+                prevComment.setLength(0);
+            }
         }
         footerComment = prevComment.toString();
     }
@@ -469,15 +472,15 @@ class Properties {
                     // but we want to preserve whitespace before comments
                     if (c == ' ' || c == '\t' || c == '\f') {
                         // save the whitespace in case it precedes a comment
-                	if (!appendedLineBegin)
-                	    lineBuf[len++] = c;
-                	// skipping space/tab/formfeed
+                        if (!appendedLineBegin)
+                            lineBuf[len++] = c;
+                        // skipping space/tab/formfeed
                         continue;
                     }
                     if (!appendedLineBegin && (c == '\r' || c == '\n')) {
                         // save the whitespace in case it precedes a comment
                         lineBuf[len++] = c;
-                	// skipping NL/CR
+                        // skipping NL/CR
                         continue;
                     }
                     // by this point, we've encountered (a) non-whitespace, or 
@@ -493,9 +496,9 @@ class Properties {
                         isCommentLine = true;
                         continue;
                     } else {
-                	// Since this is not a comment line, drop the 
-                	// whitespace we've been saving
-                	len = 0;
+                        // Since this is not a comment line, drop the 
+                        // whitespace we've been saving
+                        len = 0;
                     }
                 }
 
@@ -503,7 +506,7 @@ class Properties {
                     // an ordinary char (not leading whitespace or hash, and not EOL)
                     lineBuf[len++] = c;
                     if (len == lineBuf.length) {
-                	// expand lineBuf...
+                        // expand lineBuf...
                         int newLength = lineBuf.length * 2;
                         if (newLength < 0) {
                             newLength = Integer.MAX_VALUE;
@@ -677,10 +680,10 @@ class Properties {
 
     private static void writeComments(BufferedWriter bw, String comments, boolean writeHashes)
         throws IOException {
-	if (comments == null)
-	    return;
-	if (writeHashes)
-	    bw.write("#");
+        if (comments == null)
+            return;
+        if (writeHashes)
+            bw.write("#");
         int len = comments.length();
         int current = 0;
         int last = 0;
@@ -716,8 +719,8 @@ class Properties {
         }
         if (last != current)
             bw.write(comments.substring(last, current));
-	if (writeHashes)
-	    bw.newLine();
+        if (writeHashes)
+            bw.newLine();
     }
 
     /**
@@ -830,11 +833,14 @@ class Properties {
             writeComments(bw, comments, true);
         synchronized (this) {
 //            if (headerComment != null)
-//        	writeComments(bw, headerComment, false);
+//                writeComments(bw, headerComment, false);
             for (String key : keySet()) {
                 Entry entry = props.get(key);
                 writeComments(bw, entry.getComment(), false);
                 String val = entry.getValue();
+                if (val == null) {
+                    throw new NullPointerException("property key \""+key+"\" has a comment but no value");
+                }
                 key = saveConvert(key, true, escUnicode);
                 /* No need to escape embedded and trailing spaces for value, hence
                  * pass false to flag.
@@ -1102,24 +1108,24 @@ class Properties {
         
         public Entry(String comment, String value) {
             this.comment = comment;
-   	    this.value = value;
-   	}
+            this.value = value;
+        }
         
         public String getComment() {
-	    return comment;
-	}
+            return comment;
+        }
         
         public void setComment(String comment) {
-	    this.comment = comment;
-	}
+            this.comment = comment;
+        }
         
         public String getValue() {
-	    return value;
-	}
+            return value;
+        }
         
         public void setValue(String value) {
-	    this.value = value;
-	}
+            this.value = value;
+        }
     }
     
     private final Map<String,Entry> props = new LinkedHashMap<String, Entry>();
@@ -1127,48 +1133,109 @@ class Properties {
     static final String PROJECT_NAME = "OpenProperties";
 
     private String get(String key) {
-	Entry entry = props.get(key);
-	return entry == null ? null : entry.getValue();
+        Entry entry = props.get(key);
+        return entry == null ? null : entry.getValue();
     }
 
+    /**
+     * Returns the set of property keys.
+     * 
+     * @return
+     */
     public Set<String> keySet() {
-	return props.keySet();
+        return props.keySet();
     }
     
+    /**
+     * Returns the "raw" comment for the specified key, or null if there is none.
+     * Note that the raw comment may include empty lines or lines which 
+     * contain only whitespace, and non-whitespace lines will include the 
+     * comment marker ("#" or "!"). 
+     * 
+     * @param key
+     * @return
+     */
     public String getRawComment(String key) {
-	Entry entry = props.get(key);
-	return entry == null ? null : entry.getComment();
+        Entry entry = props.get(key);
+        return entry == null ? null : entry.getComment();
     }
     
+    /**
+     * Sets the "raw" comment for the specified key.  Each line of the 
+     * comment must be either empty, whitespace-only, or preceded by a 
+     * comment marker ("#" or "!").  This is not enforced by this class.
+     * <br>
+     * Note: if you set a comment, you must set a corresponding value before 
+     * calling store or storeToXML. 
+     * 
+     * @param key
+     * @param comment
+     */
     public void setRawComment(String key, String comment) {
-	Entry entry = props.get(key);
-	if (entry == null) {
-	    entry = new Entry(comment, null);
-	    props.put(key, entry);
-	} else {
-	    entry.setComment(comment);
-	}
+        Entry entry = props.get(key);
+        if (entry == null) {
+            entry = new Entry(comment, null);
+            props.put(key, entry);
+        } else {
+            entry.setComment(comment);
+        }
     }
 
+    /**
+     * Sets the comment for the specified key.  Each line of the comment 
+     * will be preceded by the comment marker "#", and leading and 
+     * trailing whitespace will not be preserved.
+     * <br>
+     * Note: if you set a comment, you must set a corresponding value before 
+     * calling store or storeToXML. 
+     * 
+     * @param key
+     * @param comment
+     */
     public void setComment(String key, String comment) {
-        if (comment != null)
-            comment = "# " + comment;
+        if (comment != null) {
+            StringBuilder sb = new StringBuilder(comment.length()+30);
+            String[] lines = comment.split("\n");
+            for (String line : lines) {
+                sb.append("# ").append(line).append('\n');
+            }
+            comment = sb.toString();
+        }
         setRawComment(key, comment);
     }
     
+    /**
+     * Returns the comment for the specified key, or null if there is none.
+     * 
+     * @param key
+     * @return
+     */
     public String getComment(String key) {
-	String raw = getRawComment(key);
-	if (raw == null)
-	    return null;
-	String trimmed = raw.trim();
-	if (trimmed.length() == 0)
-	    return "";
-	switch (trimmed.charAt(0)) {
-	case '#':
-	case '!':
-	    return trimmed.substring(1).trim();
-	default:
-	    return trimmed;
-	}
+        String raw = getRawComment(key);
+        if (raw == null)
+            return null;
+        StringBuilder sb = new StringBuilder(raw.length());
+        
+        String[] lines = raw.split("\n");
+        for (int i = 0; i < lines.length; i++) {
+	    String line = lines[i];
+            // remove leading whitespace (and \r)
+            String trimmed = line.trim();
+            if (trimmed.length() != 0) {
+                switch (trimmed.charAt(0)) {
+                case '#':
+                case '!':
+                    // remove comment-marker and any following whitespace
+                    sb.append(trimmed.substring(1).trim());
+                    break;
+                default:
+                    sb.append(trimmed);
+                break;
+                }
+            }
+            if(i+1 < lines.length)
+        	sb.append('\n');
+        }
+        return sb.toString();
     }
 }
