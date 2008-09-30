@@ -40,7 +40,6 @@ import java.io.BufferedWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.InvalidPropertiesFormatException;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -149,8 +148,8 @@ class Properties {
      * @since    1.2
      */
     public synchronized Object setProperty(String key, String value) {
-	if (key == null || value == null)
-	    throw new NullPointerException();
+        if (key == null || value == null)
+            throw new NullPointerException();
         Entry entry = props.get(key);
         if (entry == null) {
             entry = new Entry(null, value);
@@ -478,10 +477,10 @@ class Properties {
                         continue;
                     }
                     if (!appendedLineBegin && (c == '\r' || c == '\n')) {
-                        // save the whitespace in case it precedes a comment
+                        // return NL/CR as a comment line
+                	isCommentLine = true;
                         lineBuf[len++] = c;
-                        // skipping NL/CR
-                        continue;
+                        return len;
                     }
                     // by this point, we've encountered (a) non-whitespace, or 
                     // (b) a newline which was not escaped by a backslash 
@@ -495,6 +494,13 @@ class Properties {
                         skipWhiteSpace = false;
                         isCommentLine = true;
                         continue;
+                    } else if (c == '\r' || c == '\n') {
+                	// a blank line
+                	// include newline in the comment
+                	isCommentLine = true;
+                        lineBuf[len++] = c;
+                        return len;
+
                     } else {
                         // Since this is not a comment line, drop the 
                         // whitespace we've been saving
@@ -525,6 +531,7 @@ class Properties {
                 else {
                     // reached EOL
                     if (isCommentLine || len == 0) {
+                	// include newline in the comment
                         lineBuf[len++] = c;
                         isNewLine = true;
                         skipWhiteSpace = true;
@@ -720,7 +727,7 @@ class Properties {
         if (last != current)
             bw.write(comments.substring(last, current));
         if (writeHashes)
-            bw.newLine();
+        bw.newLine();
     }
 
     /**
@@ -1103,6 +1110,9 @@ class Properties {
     private String footerComment;
 
     private static class Entry {
+	/**
+	 * Raw comment/whitespace, including comment marker and newlines
+	 */
         private String comment;
         private String value;
         
@@ -1218,7 +1228,7 @@ class Properties {
         
         String[] lines = raw.split("\n");
         for (int i = 0; i < lines.length; i++) {
-	    String line = lines[i];
+            String line = lines[i];
             // remove leading whitespace (and \r)
             String trimmed = line.trim();
             if (trimmed.length() != 0) {
@@ -1234,8 +1244,9 @@ class Properties {
                 }
             }
             if(i+1 < lines.length)
-        	sb.append('\n');
+                sb.append('\n');
         }
         return sb.toString();
     }
+
 }
