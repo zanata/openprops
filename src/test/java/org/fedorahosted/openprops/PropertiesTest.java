@@ -116,9 +116,9 @@ public class PropertiesTest extends TestCase {
 	InputStream orig = getData(inputName);
 	props.load(orig);
 	orig.close();
-	File tempFile = File.createTempFile("PropertiesTest", "_tmp.properties", new File("test"));
-	tempFile.deleteOnExit();
+	File tempFile = File.createTempFile("PropertiesTest", "_tmp.properties");
 //	File tempFile = new File("test", getPropertiesName());
+	tempFile.deleteOnExit();
 	OutputStream tempOut = new FileOutputStream(tempFile);	
 	props.store(tempOut, null);
 	tempOut.close();
