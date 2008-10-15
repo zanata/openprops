@@ -43,6 +43,10 @@ public class PropertiesTest extends TestCase {
     public void testNewlines() throws Exception {
 	roundTripForTestName();
     }
+    
+    public void testNewlinesInValues() throws Exception {
+	roundTripForTestName();
+    }
 
     public void testComplex() throws Exception {
 	roundTripForTestName();
