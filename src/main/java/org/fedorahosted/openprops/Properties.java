@@ -34,6 +34,7 @@ import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.io.BufferedWriter;
@@ -152,7 +153,7 @@ class Properties {
             throw new NullPointerException();
         Entry entry = props.get(key);
         if (entry == null) {
-            entry = new Entry(null, value);
+            entry = new Entry("", value);
             props.put(key, entry);
             return null;
         } else {
@@ -843,7 +844,7 @@ class Properties {
 //                writeComments(bw, headerComment, false);
             for (String key : keySet()) {
                 Entry entry = props.get(key);
-                writeComments(bw, entry.getComment(), false);
+                writeComments(bw, entry.getRawComment(), false);
                 String val = entry.getValue();
                 if (val == null) {
                     throw new NullPointerException("property key \""+key+"\" has a comment but no value");
@@ -1106,27 +1107,27 @@ class Properties {
     };
     
     /** Including leading "#/!"s and one or more newlines */
-//    private String headerComment;
-    private String footerComment;
+//    private String headerComment = "";
+    private String footerComment = "";
 
-    private static class Entry {
+    private static final class Entry {
 	/**
 	 * Raw comment/whitespace, including comment marker and newlines
 	 */
-        private String comment;
+        private String rawComment;
         private String value;
         
-        public Entry(String comment, String value) {
-            this.comment = comment;
+        public Entry(String rawComment, String value) {
+            this.rawComment = rawComment;
             this.value = value;
         }
         
-        public String getComment() {
-            return comment;
+        public String getRawComment() {
+            return rawComment;
         }
         
-        public void setComment(String comment) {
-            this.comment = comment;
+        public void setRawComment(String rawComment) {
+            this.rawComment = rawComment;
         }
         
         public String getValue() {
@@ -1135,6 +1136,29 @@ class Properties {
         
         public void setValue(String value) {
             this.value = value;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+        	return true;
+            if (!(obj instanceof Entry))
+        	return false;
+            Entry other = (Entry) obj;
+            return Properties.equals(this.rawComment, other.rawComment) && Properties.equals(this.value, other.value);
+        }
+        
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 31 * hash + (rawComment == null ? 0 : rawComment.hashCode());
+            hash = 31 * hash + (value == null ? 0 : value.hashCode());
+            return hash;
+        }
+
+        @Override
+        public String toString() {
+            return "Entry[comment="+rawComment+" value="+value+"]";
         }
     }
     
@@ -1167,7 +1191,7 @@ class Properties {
      */
     public String getRawComment(String key) {
         Entry entry = props.get(key);
-        return entry == null ? null : entry.getComment();
+        return entry == null ? null : entry.getRawComment();
     }
     
     /**
@@ -1178,16 +1202,18 @@ class Properties {
      * Note: if you set a comment, you must set a corresponding value before 
      * calling store or storeToXML. 
      * 
-     * @param key
-     * @param comment
+     * @param key property key whose comment should be set
+     * @param rawComment raw comment to go with property key, "" for no comment
      */
-    public void setRawComment(String key, String comment) {
+    public void setRawComment(String key, String rawComment) {
+	if (rawComment == null)
+	    throw new NullPointerException();
         Entry entry = props.get(key);
         if (entry == null) {
-            entry = new Entry(comment, null);
+            entry = new Entry(rawComment, null);
             props.put(key, entry);
         } else {
-            entry.setComment(comment);
+            entry.setRawComment(rawComment);
         }
     }
 
@@ -1199,11 +1225,13 @@ class Properties {
      * Note: if you set a comment, you must set a corresponding value before 
      * calling store or storeToXML. 
      * 
-     * @param key
-     * @param comment
+     * @param key property key whose comment should be set
+     * @param comment comment to go with property key, "" for no comment
      */
     public void setComment(String key, String comment) {
-        if (comment != null) {
+	if (comment == null)
+	    throw new NullPointerException();
+        if (comment.length() != 0) {
             StringBuilder sb = new StringBuilder(comment.length()+30);
             String[] lines = comment.split("\n");
             for (String line : lines) {
@@ -1247,6 +1275,43 @@ class Properties {
                 sb.append('\n');
         }
         return sb.toString();
+    }
+    
+    private static boolean equals(Object a, Object b) {
+	if (a == null)
+	    return b == null;
+	return a.equals(b);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+        if (obj == null)
+            return false;
+        if (obj.getClass() != this.getClass())
+	    return false;
+        Properties other = (Properties) obj;
+        return this.footerComment.equals(other.footerComment) && this.props.equals(other.props);
+    }
+    
+    @Override
+    public int hashCode() {
+	int hash = 7;
+	hash = 31 * hash + footerComment.hashCode();
+	hash = 31 * hash + props.hashCode();
+	return hash;
+    }
+    
+    @Override
+    public String toString() {
+	StringWriter writer = new StringWriter();
+	try {
+	    store(writer, null);
+	} catch (IOException e) {
+	    throw new RuntimeException(e);
+	}
+	return getClass().getName()+"["+writer.toString()+"]";
     }
 
 }
