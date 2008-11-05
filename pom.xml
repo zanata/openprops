@@ -8,29 +8,34 @@
   <name>OpenProps</name>
   <url>https://fedorahosted.org/openprops</url>
   <description>${name} is a tiny Java library which reads and writes .properties files using the same code as java.util.Properties from the OpenJDK, but enhanced so that it preserves the order of entries within the file, and it also preserves comments in the file. This means that a Properties editor or a file converter written to use OpenProps won't have to lose comments or mess up the order of entries.</description>
-    <licenses>
-        <license>
-            <name>GNU General Public License, version 2, with the Classpath Exception</name>
-            <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                    <showDeprecation>true</showDeprecation>
-                    <showWarnings>true</showWarnings>
-                    <optimize>true</optimize>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <licenses>
+      <license>
+          <name>GNU General Public License, version 2, with the Classpath Exception</name>
+          <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
+          <distribution>repo</distribution>
+      </license>
+  </licenses>
+  <scm>
+      <connection>scm:svn:http://svn.fedorahosted.org/svn/openprops/trunk</connection>
+      <developerConnection>scm:svn:svn+ssh://svn.fedorahosted.org/svn/openprops/trunk</developerConnection>
+      <url>https://fedorahosted.org/openprops/browser/trunk</url>
+  </scm>
+  <build>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>2.0.2</version>
+              <configuration>
+                  <source>1.5</source>
+                  <target>1.5</target>
+                  <showDeprecation>true</showDeprecation>
+                  <showWarnings>true</showWarnings>
+                  <optimize>true</optimize>
+              </configuration>
+          </plugin>
+      </plugins>
+  </build>
   
   <dependencies>
     <dependency>
