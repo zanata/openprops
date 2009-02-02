@@ -128,6 +128,9 @@ class Properties {
     /** The serialVersionUID */
     private static final long serialVersionUID = 1L;
 
+    // This should be pretty safe, at least for ISO-8859-1 files
+    private static final String NEWLINE_REGEX = "(\r\n|\r|\n)"; //$NON-NLS-1$
+
     /**
      * Creates an empty property list with no default values.
      */
@@ -1180,6 +1183,22 @@ class Properties {
         return props.keySet();
     }
     
+    public String getFooterComment() {
+	return cookComment(footerComment);
+    }
+    
+    public void setFooterComment(String comment) {
+	this.footerComment = uncookComment(comment);
+    }
+    
+    public String getRawFooterComment() {
+	return footerComment;
+    }
+    
+    public void setRawFooterComment(String comment) {
+	this.footerComment = comment;
+    }
+    
     /**
      * Returns the "raw" comment for the specified key, or null if there is none.
      * Note that the raw comment may include empty lines or lines which 
@@ -1231,50 +1250,62 @@ class Properties {
     public void setComment(String key, String comment) {
 	if (comment == null)
 	    throw new NullPointerException();
-        if (comment.length() != 0) {
-            StringBuilder sb = new StringBuilder(comment.length()+30);
-            String[] lines = comment.split("\n");
-            for (String line : lines) {
-                sb.append("# ").append(line).append('\n');
-            }
-            comment = sb.toString();
-        }
-        setRawComment(key, comment);
+        setRawComment(key, uncookComment(comment));
     }
     
     /**
      * Returns the comment for the specified key, or null if there is none.
-     * 
+     * Any embedded newline sequences will be replaced by \n characters.
      * @param key
      * @return
      */
     public String getComment(String key) {
         String raw = getRawComment(key);
+        return cookComment(raw);
+    }
+    
+    private static String cookComment(String raw) {
         if (raw == null)
             return null;
         StringBuilder sb = new StringBuilder(raw.length());
         
-        String[] lines = raw.split("\n");
+        String[] lines = raw.split(NEWLINE_REGEX);
         for (int i = 0; i < lines.length; i++) {
             String line = lines[i];
-            // remove leading whitespace (and \r)
-            String trimmed = line.trim();
-            if (trimmed.length() != 0) {
-                switch (trimmed.charAt(0)) {
-                case '#':
-                case '!':
-                    // remove comment-marker and any following whitespace
-                    sb.append(trimmed.substring(1).trim());
-                    break;
-                default:
-                    sb.append(trimmed);
-                break;
-                }
-            }
+            sb.append(cookCommentLine(line));
             if(i+1 < lines.length)
                 sb.append('\n');
         }
         return sb.toString();
+    }
+    
+    private static String uncookComment(String comment) {
+        if (comment.length() != 0) {
+            StringBuilder sb = new StringBuilder(comment.length()+30);
+            String[] lines = comment.split(NEWLINE_REGEX);
+            for (String line : lines) {
+        	// NB writeComments() will replace \n with a BufferedWriter.newLine() call
+                sb.append("# ").append(line).append('\n'); //$NON-NLS-1$
+            }
+            return sb.toString();
+        }
+        return ""; //$NON-NLS-1$
+    }
+    
+    public static String cookCommentLine(String line) {
+        // remove leading whitespace (and \r)
+        String trimmed = line.trim();
+        if (trimmed.length() != 0) {
+            switch (trimmed.charAt(0)) {
+            case '#':
+            case '!':
+                // remove comment-marker and any following whitespace
+                return trimmed.substring(1).trim();
+            default:
+                return trimmed;
+            }
+        }
+        return ""; //$NON-NLS-1$
     }
     
     private static boolean equals(Object a, Object b) {
