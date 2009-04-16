@@ -122,7 +122,7 @@ import java.util.Set;
  * @author  Xueming Shen
  * @since   JDK1.0
  */
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({"unchecked", "nls"})
 public
 class Properties {
     /** The serialVersionUID */
@@ -357,6 +357,7 @@ class Properties {
         boolean hasSep;
         boolean precedingBackslash;
         StringBuilder prevComment = new StringBuilder();
+        int lineNumber = lr.lineNumber;
 
         while ((limit = lr.readLine()) >= 0) {
             c = 0;
@@ -401,9 +402,10 @@ class Properties {
             } else {
                 String key = loadConvert(lr.lineBuf, 0, keyLen, convtBuf);
                 String value = loadConvert(lr.lineBuf, valueStart, limit - valueStart, convtBuf);
-                props.put(key, new Entry(prevComment.toString(), value));
+                props.put(key, new Entry(prevComment.toString(), value, lineNumber));
                 prevComment.setLength(0);
             }
+            lineNumber = lr.lineNumber;
         }
         footerComment = prevComment.toString();
     }
@@ -415,7 +417,9 @@ class Properties {
      * the line in "lineBuf".
      */
     class LineReader {
-        public LineReader(InputStream inStream) {
+        int lineNumber = 1;
+
+	public LineReader(InputStream inStream) {
             this.inStream = inStream;
             inByteBuf = new byte[8192];
         }
@@ -484,6 +488,7 @@ class Properties {
                         // return NL/CR as a comment line
                 	isCommentLine = true;
                         lineBuf[len++] = c;
+                        ++lineNumber;
                         return len;
                     }
                     // by this point, we've encountered (a) non-whitespace, or 
@@ -503,6 +508,7 @@ class Properties {
                 	// include newline in the comment
                 	isCommentLine = true;
                         lineBuf[len++] = c;
+                        ++lineNumber;
                         return len;
 
                     } else {
@@ -534,6 +540,7 @@ class Properties {
                 }
                 else {
                     // reached EOL
+                    ++lineNumber;
                     if (isCommentLine || len == 0) {
                 	// include newline in the comment
                         lineBuf[len++] = c;
@@ -1119,10 +1126,16 @@ class Properties {
 	 */
         private String rawComment;
         private String value;
+        private int lineNumber;
         
-        public Entry(String rawComment, String value) {
+        public Entry(String rawComment, String value, int lineNumber) {
             this.rawComment = rawComment;
             this.value = value;
+            this.lineNumber = lineNumber;
+        }
+        
+        public Entry(String rawComment, String value) {
+            this(rawComment, value, -1);
         }
         
         public String getRawComment() {
@@ -1141,6 +1154,14 @@ class Properties {
             this.value = value;
         }
         
+        public int getLineNumber() {
+	    return lineNumber;
+	}
+        
+        public void setLineNumber(int lineNumber) {
+	    this.lineNumber = lineNumber;
+	}
+        
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -1149,6 +1170,8 @@ class Properties {
         	return false;
             Entry other = (Entry) obj;
             return Properties.equals(this.rawComment, other.rawComment) && Properties.equals(this.value, other.value);
+//            return Properties.equals(this.rawComment, other.rawComment) && Properties.equals(this.value, other.value) &&
+//            	this.lineNumber == other.lineNumber;
         }
         
         @Override
@@ -1262,6 +1285,14 @@ class Properties {
     public String getComment(String key) {
         String raw = getRawComment(key);
         return cookComment(raw);
+    }
+    
+    public int getLineNumber(String key) {
+	return props.get(key).lineNumber;
+    }
+    
+    public synchronized int size() {
+	return props.size();
     }
     
     private static String cookComment(String raw) {

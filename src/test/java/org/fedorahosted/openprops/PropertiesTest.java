@@ -22,6 +22,7 @@ import org.fedorahosted.openprops.Properties;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("nls")
 public class PropertiesTest extends TestCase {
     
     public void testGetSetComment() throws Exception {
@@ -78,6 +79,14 @@ public class PropertiesTest extends TestCase {
     
     public void testEmbeddedTabs() throws Exception {
 	checkAsymmetrical("embeddedTabsExpected.properties", "embeddedTabsInput.properties");
+    }
+    
+    public void testLineNumber() throws Exception {
+	Properties props = new Properties();
+	props.load(getData(getPropertiesName()));
+	assertEquals(2, props.getLineNumber("keyOnLine2"));
+	assertEquals(3, props.getLineNumber("keyOnLine3"));
+	assertEquals(5, props.getLineNumber("keyOnLine5"));
     }
     
     /**
