@@ -73,6 +73,10 @@ public class PropertiesTest extends TestCase {
 	roundTripForTestName();
     }
 
+    public void testLastLineWhitespace() throws Exception {
+	roundTripForTestName();
+    }
+
     public void testAsymmetrical() throws Exception {
 	checkAsymmetrical("asymmetricalExpected.properties", "asymmetricalInput.properties");
     }

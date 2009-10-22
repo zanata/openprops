@@ -458,6 +458,9 @@ class Properties {
                         if (len == 0) {
                             return -1;
                         }
+                        if (skipWhiteSpace) {
+                            isCommentLine = true;
+                        }
                         return len;
                     }
                 }
