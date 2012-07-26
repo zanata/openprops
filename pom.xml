@@ -21,10 +21,24 @@
       </license>
   </licenses>
   <scm>
-      <connection>scm:svn:http://svn.fedorahosted.org/svn/openprops/trunk</connection>
-      <developerConnection>scm:svn:svn+ssh://svn.fedorahosted.org/svn/openprops/trunk</developerConnection>
-      <url>https://fedorahosted.org/openprops/browser/trunk</url>
+    <connection>scm:git:git@github.com:zanata/openprops.git</connection>
+    <developerConnection>scm:git:git@github.com:zanata/openprops.git</developerConnection>
+    <url>git@github.com:zanata/openprops.git</url>
   </scm>
+
+	<developers>
+		<!-- in alphabetical order (by id field) -->
+		<developer>
+			<id>sflaniga@redhat.com</id>
+			<name>Sean Flanigan</name>
+			<email>sflaniga@redhat.com</email>
+			<organization>Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<timezone>10</timezone>
+		</developer>
+	</developers>
+
+
   <build>
       <plugins>
           <plugin>
