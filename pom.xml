@@ -1,5 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
   <groupId>org.fedorahosted.openprops</groupId>
   <artifactId>openprops</artifactId>
   <packaging>jar</packaging>
@@ -64,30 +69,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <distributionManagement>
-    <repository>
-      <id>fhosted.tennera.svn</id>
-      <name>fedorahosted tennera svn repository</name>
-      <url>file:///srv/maven2/repo</url>
-    </repository>
-    <snapshotRepository>
-      <id>hiro.m2snap</id>
-      <name>hirosnap</name>
-      <url>scpexe://hiro.bne.redhat.com:/srv/maven2/snapshot/</url>
-    </snapshotRepository>
-  <!-- 
-    <repository>
-      <id>fhosted.tennera.repo</id>
-      <name>fedorahosted tennera repository</name>
-      <url>scpexe://fedorahosted.org:tennera/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>fhosted.tennera.snap</id>
-      <name>fedorahosted tennera snapshot repository</name>
-      <url>scpexe://fedorahosted.org:tennera/maven2-snapshot</url>
-    </snapshotRepository>
-   -->
-  </distributionManagement>
 
 </project>
