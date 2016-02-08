@@ -1,10 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-  </parent>
   <groupId>org.fedorahosted.openprops</groupId>
   <artifactId>openprops</artifactId>
   <packaging>jar</packaging>
@@ -13,17 +9,17 @@
   <url>https://fedorahosted.org/openprops</url>
   <description>${project.name} is a tiny Java library which reads and writes .properties files using the same code as java.util.Properties from the OpenJDK, but enhanced so that it preserves the order of entries within the file, and it also preserves comments in the file. This means that a Properties editor or a file converter written to use OpenProps won't have to lose comments or mess up the order of entries.</description>
 
-    <issueManagement>
-        <system>Trac</system>
-        <url>https://fedorahosted.org/openprops</url>
-    </issueManagement>
+  <issueManagement>
+    <system>Trac</system>
+    <url>https://fedorahosted.org/openprops</url>
+  </issueManagement>
 
   <licenses>
-      <license>
-          <name>GNU General Public License, version 2, with the Classpath Exception</name>
-          <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
-          <distribution>repo</distribution>
-      </license>
+    <license>
+      <name>GNU General Public License, version 2, with the Classpath Exception</name>
+      <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
+      <distribution>repo</distribution>
+    </license>
   </licenses>
   <scm>
     <connection>scm:git:git@github.com:zanata/openprops.git</connection>
@@ -31,50 +27,158 @@
     <url>git@github.com:zanata/openprops.git</url>
   </scm>
 
-	<developers>
-		<!-- in alphabetical order (by id field) -->
-		<developer>
-			<id>sflaniga@redhat.com</id>
-			<name>Sean Flanigan</name>
-			<email>sflaniga@redhat.com</email>
-			<organization>Red Hat</organization>
-			<organizationUrl>http://www.redhat.com/</organizationUrl>
-			<timezone>10</timezone>
-		</developer>
-	</developers>
+  <developers>
+    <!-- in alphabetical order (by id field) -->
+    <developer>
+      <id>sflaniga@redhat.com</id>
+      <name>Sean Flanigan</name>
+      <email>sflaniga@redhat.com</email>
+      <organization>Red Hat</organization>
+      <organizationUrl>http://www.redhat.com/</organizationUrl>
+      <timezone>10</timezone>
+    </developer>
+  </developers>
+  <contributors>
+    <!-- in alphabetical order (by email field) -->
+    <contributor>
+      <name>Ding-Yi Chen</name>
+      <email>dchen@redhat.com</email>
+      <organization>Red Hat</organization>
+      <organizationUrl>http://www.redhat.com/</organizationUrl>
+      <roles>
+	<role>packager</role>
+	<role>tester</role>
+      </roles>
+      <timezone>10</timezone>
+    </contributor>
+  </contributors>
 
+  <properties>
+    <!--
+    Version of java compiler used for building. (Specified as major.minor,
+    as used by javac -source and -target).
+    -->
+    <required.java>1.8</required.java>
+    <!--
+      Version of Java used for runtime (major.minor) and for bytecode
+      generation. Should correspond with animal.sniffer.signature.
+    -->
+    <required.jvm>1.7</required.jvm>
+  </properties>
 
   <build>
-      <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-gpg-plugin</artifactId>
-              <configuration>
-                  <useAgent>true</useAgent>
-              </configuration>
-          </plugin>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <version>2.0.2</version>
-              <configuration>
-                  <source>1.5</source>
-                  <target>1.5</target>
-                  <showDeprecation>true</showDeprecation>
-                  <showWarnings>true</showWarnings>
-                  <optimize>true</optimize>
-              </configuration>
-          </plugin>
-      </plugins>
+    <plugins>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-gpg-plugin</artifactId>
+	<configuration>
+	  <useAgent>true</useAgent>
+	</configuration>
+      </plugin>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-compiler-plugin</artifactId>
+	<version>3.3</version>
+	<configuration>
+	  <source>${required.java}</source>
+	  <target>${required.java}</target>
+	  <showDeprecation>true</showDeprecation>
+	  <showWarnings>true</showWarnings>
+	  <optimize>true</optimize>
+	</configuration>
+      </plugin>
+    </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+	<plugins>
+	  <!-- Deploy sources to OSSRH -->
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-source-plugin</artifactId>
+	    <version>2.2.1</version>
+	    <executions>
+	      <execution>
+		<id>attach-sources</id>
+		<goals>
+		  <goal>jar-no-fork</goal>
+		</goals>
+	      </execution>
+	    </executions>
+	  </plugin>
+
+	  <!-- Deploy javadocs to OSSRH -->
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-javadoc-plugin</artifactId>
+	    <version>2.9.1</version>
+	    <executions>
+	      <execution>
+		<id>attach-javadocs</id>
+		<goals>
+		  <goal>jar</goal>
+		</goals>
+	      </execution>
+	    </executions>
+	  </plugin>
+
+	  <!-- Deploy sign artifacts for OSSRH -->
+	  <plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-gpg-plugin</artifactId>
+	    <version>1.5</version>
+	    <executions>
+	      <execution>
+		<id>sign-artifacts</id>
+		<phase>verify</phase>
+		<goals>
+		  <goal>sign</goal>
+		</goals>
+	      </execution>
+	    </executions>
+	    <configuration>
+	      <useAgent>true</useAgent>
+	    </configuration>
+	  </plugin>
+
+	  <!--<plugin>-->
+	    <!--<groupId>org.sonatype.plugins</groupId>-->
+	    <!--<artifactId>nexus-staging-maven-plugin</artifactId>-->
+	    <!--<version>1.6.5</version>-->
+	    <!--<extensions>true</extensions>-->
+	    <!--<configuration>-->
+	      <!--<serverId>sonatype-nexus-staging</serverId>-->
+	      <!--<nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
+	      <!--<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+	      <!--</configuration>-->
+	    <!--</plugin>-->
+
+	</plugins>
+      </build>
+    </profile>
+  </profiles>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype-nexus-staging</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
 </project>
+
