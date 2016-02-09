@@ -10,14 +10,14 @@
   <description>${project.name} is a tiny Java library which reads and writes .properties files using the same code as java.util.Properties from the OpenJDK, but enhanced so that it preserves the order of entries within the file, and it also preserves comments in the file. This means that a Properties editor or a file converter written to use OpenProps won't have to lose comments or mess up the order of entries.</description>
 
   <issueManagement>
-    <system>Trac</system>
-    <url>https://fedorahosted.org/openprops</url>
+    <system>GitHub</system>
+    <url>https://github.com/zanata/openprops/issues</url>
   </issueManagement>
 
   <licenses>
     <license>
       <name>GNU General Public License, version 2, with the Classpath Exception</name>
-      <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
+      <url>https://raw.githubusercontent.com/zanata/openprops/master/COPYING.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -46,8 +46,8 @@
       <organization>Red Hat</organization>
       <organizationUrl>http://www.redhat.com/</organizationUrl>
       <roles>
-	<role>packager</role>
-	<role>tester</role>
+        <role>packager</role>
+        <role>tester</role>
       </roles>
       <timezone>10</timezone>
     </contributor>
@@ -58,34 +58,34 @@
     Version of java compiler used for building. (Specified as major.minor,
     as used by javac -source and -target).
     -->
-    <required.java>1.8</required.java>
+    <required.java>1.6</required.java>
     <!--
       Version of Java used for runtime (major.minor) and for bytecode
       generation. Should correspond with animal.sniffer.signature.
     -->
-    <required.jvm>1.7</required.jvm>
+    <required.jvm>1.6</required.jvm>
   </properties>
 
   <build>
     <plugins>
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-gpg-plugin</artifactId>
-	<configuration>
-	  <useAgent>true</useAgent>
-	</configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <configuration>
+          <useAgent>true</useAgent>
+        </configuration>
       </plugin>
       <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-compiler-plugin</artifactId>
-	<version>3.3</version>
-	<configuration>
-	  <source>${required.java}</source>
-	  <target>${required.java}</target>
-	  <showDeprecation>true</showDeprecation>
-	  <showWarnings>true</showWarnings>
-	  <optimize>true</optimize>
-	</configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <source>${required.java}</source>
+          <target>${required.java}</target>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <optimize>true</optimize>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -103,69 +103,56 @@
     <profile>
       <id>release</id>
       <build>
-	<plugins>
-	  <!-- Deploy sources to OSSRH -->
-	  <plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-source-plugin</artifactId>
-	    <version>2.2.1</version>
-	    <executions>
-	      <execution>
-		<id>attach-sources</id>
-		<goals>
-		  <goal>jar-no-fork</goal>
-		</goals>
-	      </execution>
-	    </executions>
-	  </plugin>
+        <plugins>
+          <!-- Deploy sources to OSSRH -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
 
-	  <!-- Deploy javadocs to OSSRH -->
-	  <plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-javadoc-plugin</artifactId>
-	    <version>2.9.1</version>
-	    <executions>
-	      <execution>
-		<id>attach-javadocs</id>
-		<goals>
-		  <goal>jar</goal>
-		</goals>
-	      </execution>
-	    </executions>
-	  </plugin>
+          <!-- Deploy javadocs to OSSRH -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9.1</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
 
-	  <!-- Deploy sign artifacts for OSSRH -->
-	  <plugin>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-gpg-plugin</artifactId>
-	    <version>1.5</version>
-	    <executions>
-	      <execution>
-		<id>sign-artifacts</id>
-		<phase>verify</phase>
-		<goals>
-		  <goal>sign</goal>
-		</goals>
-	      </execution>
-	    </executions>
-	    <configuration>
-	      <useAgent>true</useAgent>
-	    </configuration>
-	  </plugin>
-
-	  <!--<plugin>-->
-	    <!--<groupId>org.sonatype.plugins</groupId>-->
-	    <!--<artifactId>nexus-staging-maven-plugin</artifactId>-->
-	    <!--<version>1.6.5</version>-->
-	    <!--<extensions>true</extensions>-->
-	    <!--<configuration>-->
-	      <!--<serverId>sonatype-nexus-staging</serverId>-->
-	      <!--<nexusUrl>https://oss.sonatype.org/</nexusUrl>-->
-	      <!--<autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-	      <!--</configuration>-->
-	    <!--</plugin>-->
-
-	</plugins>
+          <!-- Deploy sign artifacts for OSSRH -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <useAgent>true</useAgent>
+            </configuration>
+          </plugin>
+        </plugins>
       </build>
     </profile>
   </profiles>
@@ -179,6 +166,5 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-
 </project>
 
