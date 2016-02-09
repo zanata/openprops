@@ -17,7 +17,7 @@
   <licenses>
     <license>
       <name>GNU General Public License, version 2, with the Classpath Exception</name>
-      <url>https://raw.githubusercontent.com/zanata/openprops/master/COPYING.txt</url>
+      <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
