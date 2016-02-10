@@ -4,7 +4,7 @@
   <groupId>org.fedorahosted.openprops</groupId>
   <artifactId>openprops</artifactId>
   <packaging>jar</packaging>
-  <version>0.7-SNAPSHOT</version>
+  <version>0.7</version>
   <name>OpenProps</name>
   <url>https://fedorahosted.org/openprops</url>
   <description>${project.name} is a tiny Java library which reads and writes .properties files using the same code as java.util.Properties from the OpenJDK, but enhanced so that it preserves the order of entries within the file, and it also preserves comments in the file. This means that a Properties editor or a file converter written to use OpenProps won't have to lose comments or mess up the order of entries.</description>
