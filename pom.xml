@@ -64,13 +64,15 @@
       generation. Should correspond with animal.sniffer.signature.
     -->
     <required.jvm>1.6</required.jvm>
+    <gpgPlugin.version>1.6</gpgPlugin.version>
   </properties>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
+	<artifactId>maven-gpg-plugin</artifactId>
+	<version>${gpgPlugin.version}</version>
         <configuration>
           <useAgent>true</useAgent>
         </configuration>
@@ -141,7 +143,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.6</version>
+	    <version>${gpgPlugin.version}</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
