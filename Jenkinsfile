@@ -62,6 +62,11 @@ timestamps {
               testDataPublishers: [[$class: 'StabilityTestDataPublisher']],
               testResults: "**/${surefireTestReports}"
 
+        gradle.aggregateJaCoCoReports()
+        publishHTML(
+          target: [reportDir:'build/reports/jacoco/jacocoRootTestReport/html',
+          reportFiles: 'index.html', reportName: 'Code Coverage']
+        )
       }
     }
   }
