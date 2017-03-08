@@ -34,10 +34,6 @@ timestamps {
         stage('Build') {
           info.printNode()
           info.printEnv()
-
-          // globstar might failed to match
-          sh "find . -path \"*/${surefireTestReports}\" -delete"
-
           sh """./mvnw -e clean verify \
                      --batch-mode \
                      --settings .travis-settings.xml \
@@ -45,7 +41,6 @@ timestamps {
                      -Dmaven.test.failure.ignore \
                      -DstaticAnalysis \
              """
-             notify.successful()
              notify.successful()
         }
       } catch (e) {
