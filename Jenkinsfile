@@ -1,12 +1,13 @@
 #!/usr/bin/env groovy
-@Library('github.com/zanata/zanata-pipeline-library@master')
 
 // Import pipeline library for utility methods & classes:
 // ansicolor(), Notifier, PullRequests, Strings
 @Field
-public static final String PIPELINE_LIBRARY_BRANCH = 'master'
+public static final String PIPELINE_LIBRARY_BRANCH = 'ZNTA-2234-codecov'
 
+@Library('github.com/zanata/zanata-pipeline-library@ZNTA-2234-codecov')
 import org.zanata.jenkins.Notifier
+import org.zanata.jenkins.PullRequests
 import org.zanata.jenkins.Reporting
 import static org.zanata.jenkins.StackTraces.getStackTrace
 
@@ -43,28 +44,23 @@ def surefireTestReports='target/surefire-reports/TEST-*.xml'
 
 timestamps {
   node {
+    echo "running on node ${env.NODE_NAME}"
     ansicolor {
       // ensure the build can handle at-signs in paths:
       dir("@") {
         try {
-          pullRequests.ensureJobDescription()
           stage('Checkout') {
-            info.printNode()
             notify.started()
             checkout scm
           }
 
           stage('Check build tools') {
-            info.printNode()
-
             // Note: if next stage happens on another node, mvnw might have to download again
             sh "./mvnw --version"
           }
 
           stage('Build') {
             notify.startBuilding()
-            info.printNode()
-            info.printEnv()
             sh """./mvnw -e clean verify \
                 --batch-mode \
                 --settings .travis-settings.xml \
@@ -78,13 +74,13 @@ timestamps {
             junit testResults: "**/${surefireTestReports}"
 
             // send test coverage data to codecov.io
-            reporting.codcov()
+            reporting.codecov()
 
             // skip coverage report if unstable
             if (currentBuild.result == null) {
               step([ $class: 'JacocoPublisher' ])
             }
-            notify.testResults("UNIT")
+            notify.testResults('UNIT', currentBuild.result)
           }
         } catch (e) {
           currentBuild.result='FAILURE'
@@ -93,5 +89,7 @@ timestamps {
         }
       }
     }
+    notify.finish()
+    currentBuild.result = (currentBuild.result) ?: 'SUCCESS'
   }
 }
