@@ -6,9 +6,9 @@
 public static final String PROJ_URL = 'https://github.com/zanata/openprops'
 
 @Field
-public static final String PIPELINE_LIBRARY_BRANCH = 'ZNTA-2234-codecov'
+public static final String PIPELINE_LIBRARY_BRANCH = 'master'
 
-@Library('github.com/zanata/zanata-pipeline-library@ZNTA-2234-codecov')
+@Library('github.com/zanata/zanata-pipeline-library@master')
 import org.zanata.jenkins.Notifier
 import org.zanata.jenkins.PullRequests
 import static org.zanata.jenkins.Reporting.codecov
