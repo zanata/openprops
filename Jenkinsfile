@@ -3,12 +3,15 @@
 // Import pipeline library for utility methods & classes:
 // ansicolor(), Notifier, PullRequests, Strings
 @Field
+public static final String PROJ_URL = 'https://github.com/zanata/openprops'
+
+@Field
 public static final String PIPELINE_LIBRARY_BRANCH = 'ZNTA-2234-codecov'
 
 @Library('github.com/zanata/zanata-pipeline-library@ZNTA-2234-codecov')
 import org.zanata.jenkins.Notifier
 import org.zanata.jenkins.PullRequests
-import org.zanata.jenkins.Reporting
+import static org.zanata.jenkins.Reporting.codecov
 import static org.zanata.jenkins.StackTraces.getStackTrace
 
 import groovy.transform.Field
@@ -19,19 +22,14 @@ PullRequests.ensureJobDescription(env, manager, steps)
 def notify
 // initialiser must be run separately (bindings not available during compilation phase)
 notify = new Notifier(env, steps, currentBuild,
-    'https://github.com/zanata/openprops.git',
-    'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
+    PROJ_URL, 'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
 )
-
-@Field
-def reporting
-reporting = new Reporting(env, steps, 'https://github.com/zanata/openprops.git')
 
 /* Only keep the 10 most recent builds. */
 def projectProperties = [
   [
     $class: 'GithubProjectProperty',
-    projectUrlStr: 'https://github.com/zanata/openprops'
+    projectUrlStr: PROJ_URL
   ],
   [
     $class: 'BuildDiscarderProperty',
@@ -74,7 +72,7 @@ timestamps {
             junit testResults: "**/${surefireTestReports}"
 
             // send test coverage data to codecov.io
-            reporting.codecov()
+            codecov(env, steps, PROJ_URL)
 
             // skip coverage report if unstable
             if (currentBuild.result == null) {
