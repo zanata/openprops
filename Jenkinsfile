@@ -11,12 +11,20 @@ public static final String PIPELINE_LIBRARY_BRANCH = 'ZNTA-2234-tag'
 @Library('github.com/zanata/zanata-pipeline-library@ZNTA-2234-tag')
 import org.zanata.jenkins.Notifier
 import org.zanata.jenkins.PullRequests
+import org.zanata.jenkins.ScmGit
 import static org.zanata.jenkins.Reporting.codecov
 import static org.zanata.jenkins.StackTraces.getStackTrace
 
 import groovy.transform.Field
 
 PullRequests.ensureJobDescription(env, manager, steps)
+
+@Field
+def pipelineLibraryScmGit
+pipelineLibraryScmGit = new ScmGit(env, steps, 'https://github.com/zanata/zanata-pipeline-library', PIPELINE_LIBRARY_BRANCH)
+
+@Field
+def mainScmGit
 
 @Field
 def notify
@@ -58,7 +66,8 @@ timestamps {
           }
 
           stage('Build') {
-            notify.startBuilding()
+            mainScmGit = new ScmGit(env, steps, 'https://github.com/zanata/zanata-pipeline-library', env.BRANCH_NAME )
+            notify.startBuilding(mainScmGit)
             sh """./mvnw -e clean verify \
                 --batch-mode \
                 --settings .travis-settings.xml \
@@ -72,7 +81,7 @@ timestamps {
             junit testResults: "**/${surefireTestReports}"
 
             // send test coverage data to codecov.io
-            codecov(env, steps, PROJ_URL)
+            codecov(env, steps, mainScmGit)
 
             // skip coverage report if unstable
             if (currentBuild.result == null) {
