@@ -47,10 +47,12 @@ def surefireTestReports='target/surefire-reports/TEST-*.xml'
 timestamps {
   node {
     echo "running on node ${env.NODE_NAME}"
-    pipelineLibraryScmGit = new ScmGit(env, steps, 'https://github.com/zanata/zanata-pipeline-library', PIPELINE_LIBRARY_BRANCH)
-    mainScmGit = new ScmGit(env, steps, PROJ_URL, env.BRANCH_NAME )
+    pipelineLibraryScmGit = new ScmGit(env, steps, 'https://github.com/zanata/zanata-pipeline-library')
+    pipelineLibraryScmGit.init(PIPELINE_LIBRARY_BRANCH)
+    mainScmGit = new ScmGit(env, steps, PROJ_URL)
+    mainScmGit.init(env.BRANCH_NAME)
     notify = new Notifier(env, steps, currentBuild,
-        pipelineLibraryScmGit, mainScmGit, 'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
+        pipelineLibraryScmGit, mainScmGit, 'Jenkinsfile',
     )
     ansicolor {
       // ensure the build can handle at-signs in paths:
@@ -68,7 +70,7 @@ timestamps {
 
           stage('Build') {
 
-            notify.startBuilding(mainScmGit)
+            notify.startBuilding()
             sh """./mvnw -e clean verify \
                 --batch-mode \
                 --settings .travis-settings.xml \
