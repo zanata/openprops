@@ -21,7 +21,6 @@ PullRequests.ensureJobDescription(env, manager, steps)
 
 @Field
 def pipelineLibraryScmGit
-pipelineLibraryScmGit = new ScmGit(env, steps, 'https://github.com/zanata/zanata-pipeline-library', PIPELINE_LIBRARY_BRANCH)
 
 @Field
 def mainScmGit
@@ -49,8 +48,9 @@ timestamps {
   node {
     echo "running on node ${env.NODE_NAME}"
     pipelineLibraryScmGit = new ScmGit(env, steps, 'https://github.com/zanata/zanata-pipeline-library', PIPELINE_LIBRARY_BRANCH)
+    mainScmGit = new ScmGit(env, steps, PROJ_URL, env.BRANCH_NAME )
     notify = new Notifier(env, steps, currentBuild,
-        pipelineLibraryScmGit, 'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
+        pipelineLibraryScmGit, mainScmGit, 'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
     )
     ansicolor {
       // ensure the build can handle at-signs in paths:
@@ -67,7 +67,7 @@ timestamps {
           }
 
           stage('Build') {
-            mainScmGit = new ScmGit(env, steps, 'https://github.com/zanata/zanata-pipeline-library', env.BRANCH_NAME )
+
             notify.startBuilding(mainScmGit)
             sh """./mvnw -e clean verify \
                 --batch-mode \
