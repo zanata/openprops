@@ -29,9 +29,6 @@ def mainScmGit
 @Field
 def notify
 // initialiser must be run separately (bindings not available during compilation phase)
-notify = new Notifier(env, steps, currentBuild,
-    pipelineLibraryScmGit, 'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
-)
 
 /* Only keep the 10 most recent builds. */
 def projectProperties = [
@@ -51,6 +48,10 @@ def surefireTestReports='target/surefire-reports/TEST-*.xml'
 timestamps {
   node {
     echo "running on node ${env.NODE_NAME}"
+    pipelineLibraryScmGit = new ScmGit(env, steps, 'https://github.com/zanata/zanata-pipeline-library', PIPELINE_LIBRARY_BRANCH)
+    notify = new Notifier(env, steps, currentBuild,
+        pipelineLibraryScmGit, 'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
+    )
     ansicolor {
       // ensure the build can handle at-signs in paths:
       dir("@") {
