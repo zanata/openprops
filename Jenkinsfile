@@ -30,7 +30,7 @@ def mainScmGit
 def notify
 // initialiser must be run separately (bindings not available during compilation phase)
 notify = new Notifier(env, steps, currentBuild,
-    PROJ_URL, 'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
+    pipelineLibraryScmGit, 'Jenkinsfile', PIPELINE_LIBRARY_BRANCH,
 )
 
 /* Only keep the 10 most recent builds. */
