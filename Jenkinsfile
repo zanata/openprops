@@ -6,9 +6,9 @@
 public static final String PROJ_URL = 'https://github.com/zanata/openprops'
 
 @Field
-public static final String PIPELINE_LIBRARY_BRANCH = 'ZNTA-2234-tag'
+public static final String PIPELINE_LIBRARY_BRANCH = 'v0.3.0'
 
-@Library('github.com/zanata/zanata-pipeline-library@ZNTA-2234-tag')
+@Library('github.com/zanata/zanata-pipeline-library@v0.3.0')
 import org.zanata.jenkins.Notifier
 import org.zanata.jenkins.PullRequests
 import org.zanata.jenkins.ScmGit
@@ -69,7 +69,6 @@ timestamps {
           }
 
           stage('Build') {
-
             notify.startBuilding()
             sh """./mvnw -e clean verify \
                 --batch-mode \
