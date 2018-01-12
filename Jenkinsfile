@@ -52,7 +52,7 @@ timestamps {
     mainScmGit = new ScmGit(env, steps, PROJ_URL)
     mainScmGit.init(env.BRANCH_NAME)
     notify = new Notifier(env, steps, currentBuild,
-        pipelineLibraryScmGit, mainScmGit, 'Jenkinsfile',
+        pipelineLibraryScmGit, mainScmGit, (env.GITHUB_COMMIT_CONTEXT) ?: 'Jenkinsfile',
     )
     ansicolor {
       // ensure the build can handle at-signs in paths:
