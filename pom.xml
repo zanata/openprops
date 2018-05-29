@@ -71,8 +71,8 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-gpg-plugin</artifactId>
-	<version>${gpgPlugin.version}</version>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>${gpgPlugin.version}</version>
         <configuration>
           <useAgent>true</useAgent>
         </configuration>
@@ -166,10 +166,10 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
             <version>3.0.0</version>
-      	    <configuration>
+            <configuration>
               <additionalparam>-Xdoclint:none</additionalparam>
             </configuration>
-      	    <executions>
+            <executions>
               <execution>
                 <id>attach-javadocs</id>
                 <goals>
@@ -190,7 +190,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-	    <version>${gpgPlugin.version}</version>
+            <version>${gpgPlugin.version}</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
