@@ -165,9 +165,11 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <!-- Fedora <= 27 still uses maven-javadoc-plugin version 2.9.1 -->
             <version>3.0.0</version>
             <configuration>
               <additionalparam>-Xdoclint:none</additionalparam>
+              <doclint>none</doclint>
             </configuration>
             <executions>
               <execution>
@@ -175,13 +177,6 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
-              </execution>
-              <execution>
-                <id>aggregate</id>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-                <phase>prepare-package</phase>
               </execution>
             </executions>
           </plugin>
