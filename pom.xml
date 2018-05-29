@@ -71,8 +71,8 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-gpg-plugin</artifactId>
-	<version>${gpgPlugin.version}</version>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>${gpgPlugin.version}</version>
         <configuration>
           <useAgent>true</useAgent>
         </configuration>
@@ -80,7 +80,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
+        <version>3.7.0</version>
         <configuration>
           <source>${required.java}</source>
           <target>${required.java}</target>
@@ -150,7 +150,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
-            <version>2.2.1</version>
+            <version>3.0.1</version>
             <executions>
               <execution>
                 <id>attach-sources</id>
@@ -165,11 +165,13 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.9.1</version>
-	    <configuration>
+            <!-- Fedora <= 27 still uses maven-javadoc-plugin version 2.9.1 -->
+            <version>3.0.0</version>
+            <configuration>
               <additionalparam>-Xdoclint:none</additionalparam>
-	    </configuration>
-	    <executions>
+              <doclint>none</doclint>
+            </configuration>
+            <executions>
               <execution>
                 <id>attach-javadocs</id>
                 <goals>
@@ -183,7 +185,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-	    <version>${gpgPlugin.version}</version>
+            <version>${gpgPlugin.version}</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>
